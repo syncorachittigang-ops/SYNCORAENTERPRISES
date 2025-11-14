@@ -1,0 +1,2356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Syncora Enterprises - Smart Classroom Automation</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="realtime-analytics.js"></script> 
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Dynamic Animated Background */
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(135deg,  #6441a5,#2a0845);
+            background-size: 400% 400%;
+            animation: gradientShift 20s ease infinite;
+        }
+
+        .animated-bg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(251, 145, 149, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(65, 89, 208, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(148, 93, 183, 0.3) 0%, transparent 50%);
+            animation: float 25s ease-in-out infinite;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(40px, -40px) scale(1.15); }
+            66% { transform: translate(-30px, 30px) scale(0.95); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        /* Login/Signup Page */
+        .auth-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .auth-box {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(25px);
+            padding: 60px 50px;
+            border-radius: 35px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+            border: 2px solid rgba(255, 255, 255, 0.25);
+            width: 100%;
+            max-width: 480px;
+            animation: fadeIn 1s ease;
+        }
+
+        .auth-logo {
+            text-align: center;
+            margin-bottom: 45px;
+        }
+
+        .auth-logo h1 {
+            font-size: 52px;
+            font-weight: 900;
+            letter-spacing: 3px;
+            background: linear-gradient(135deg, #ffffff, #fb9195, #4159d0);
+            background-size: 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientFlow 4s ease-in-out infinite;
+            margin-bottom: 10px;
+        }
+
+        .auth-logo p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        @keyframes gradientFlow {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .auth-tabs {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 35px;
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid transparent;
+            border-radius: 15px;
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.4s;
+            text-align: center;
+        }
+
+        .auth-tab.active {
+            background: rgba(255, 255, 255, 0.25);
+            border-color: rgba(251, 145, 149, 0.6);
+            color: white;
+            box-shadow: 0 6px 20px rgba(251, 145, 149, 0.4);
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            color: white;
+            margin-bottom: 10px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 16px 22px;
+            border: 2px solid rgba(255, 255, 255, 0.25);
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.12);
+            color: white;
+            font-size: 15px;
+            transition: all 0.3s;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #fb9195;
+            background: rgba(255, 255, 255, 0.18);
+            box-shadow: 0 0 25px rgba(251, 145, 149, 0.4);
+        }
+
+        .form-group input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .auth-btn {
+            width: 100%;
+            padding: 17px;
+            background: linear-gradient(135deg, #4159d0, #945db7);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.4s;
+            box-shadow: 0 10px 30px rgba(65, 89, 208, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        .auth-btn:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 40px rgba(65, 89, 208, 0.7);
+            background: linear-gradient(135deg, #945db7, #4159d0);
+        }
+
+        .auth-page {
+            display: block;
+        }
+
+        .auth-page.hidden {
+            display: none;
+        }
+
+        /* Main Dashboard */
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Hamburger Menu */
+        .hamburger {
+            display: none;
+            position: fixed;
+            top: 25px;
+            left: 25px;
+            z-index: 1001;
+            flex-direction: column;
+            gap: 7px;
+            cursor: pointer;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            border-radius: 15px;
+            border: 2px solid rgba(255, 255, 255, 0.25);
+        }
+
+        .hamburger span {
+            width: 28px;
+            height: 3px;
+            background: white;
+            border-radius: 3px;
+            transition: all 0.3s;
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(9px, 9px);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(8px, -8px);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 300px;
+            background: linear-gradient(180deg, rgba(65, 89, 208, 0.95) 0%, rgba(148, 93, 183, 0.95) 50%, rgba(251, 145, 149, 0.95) 100%);
+            backdrop-filter: blur(25px);
+            padding: 35px 25px;
+            box-shadow: 6px 0 40px rgba(0,0,0,0.4);
+            border-right: 2px solid rgba(255, 255, 255, 0.3);
+            transition: transform 0.3s ease;
+        }
+
+        .brand-section {
+            text-align: center;
+            margin-bottom: 45px;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 25px;
+            border: 2px solid rgba(255, 255, 255, 0.25);
+        }
+
+        .brand-name {
+            font-size: 42px;
+            font-weight: 900;
+            color: white;
+            letter-spacing: 3px;
+            text-shadow: 0 5px 25px rgba(0,0,0,0.3);
+            margin-bottom: 8px;
+        }
+
+        .brand-subtitle {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.85);
+            font-weight: 500;
+        }
+
+        .nav-item {
+            padding: 18px 24px;
+            margin: 12px 0;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            color: white;
+            font-weight: 600;
+            position: relative;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .nav-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.35), transparent);
+            transition: left 0.6s;
+        }
+
+        .nav-item:hover::before {
+            left: 100%;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.28);
+            transform: translateX(12px);
+        }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, rgba(251, 145, 149, 0.9), rgba(148, 93, 183, 0.9));
+            box-shadow: 0 10px 25px rgba(251, 145, 149, 0.5);
+            transform: translateX(12px);
+        }
+
+        .nav-icon {
+            font-size: 26px;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 35px;
+            overflow-y: auto;
+        }
+
+        .main-header {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(25px);
+            padding: 30px 40px;
+            border-radius: 25px;
+            margin-bottom: 35px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+            border: 2px solid rgba(255, 255, 255, 0.25);
+        }
+
+        .main-header h1 {
+            color: white;
+            font-size: 36px;
+            font-weight: 700;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            color: white;
+            font-weight: 600;
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #fb9195, #4159d0);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 20px;
+            box-shadow: 0 6px 20px rgba(251, 145, 149, 0.6);
+        }
+
+        /* Page Sections */
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+            animation: fadeIn 0.6s ease;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-bottom: 45px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(25px);
+            padding: 35px;
+            border-radius: 25px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+            border: 2px solid rgba(255, 255, 255, 0.25);
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-18px) scale(1.03);
+            box-shadow: 0 20px 50px rgba(251, 145, 149, 0.5);
+            border-color: rgba(251, 145, 149, 0.6);
+        }
+
+        .stat-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .stat-value {
+            font-size: 46px;
+            font-weight: bold;
+            color: #ffffff;
+            text-shadow: 0 3px 12px rgba(255, 255, 255, 0.4);
+            margin: 18px 0;
+        }
+
+        .stat-label {
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        /* Class Cards */
+        .class-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        /* Timetable Styles */
+.timetable-container {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(25px);
+    padding: 40px;
+    border-radius: 25px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+    border: 2px solid rgba(255, 255, 255, 0.25);
+    margin-bottom: 30px;
+    overflow-x: auto;
+}
+
+.timetable-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.timetable-table th,
+.timetable-table td {
+    padding: 20px;
+    text-align: center;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+.timetable-table th {
+    background: linear-gradient(135deg, rgba(251, 145, 149, 0.6), rgba(148, 93, 183, 0.6));
+    font-weight: 700;
+    font-size: 16px;
+}
+
+.timetable-table td {
+    background: rgba(255, 255, 255, 0.1);
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.timetable-table tr:hover td {
+    background: rgba(251, 145, 149, 0.2);
+    transform: scale(1.02);
+    transition: all 0.3s;
+}
+
+.subject-name {
+    font-weight: 600;
+    color: #fb9195;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.teacher-name {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+        .class-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(25px);
+            padding: 35px;
+            border-radius: 25px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+            border: 2px solid rgba(255, 255, 255, 0.25);
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .class-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(251, 145, 149, 0.15), rgba(65, 89, 208, 0.15));
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+
+        .class-card:hover {
+            transform: translateY(-18px) scale(1.03);
+            box-shadow: 0 25px 60px rgba(148, 93, 183, 0.5);
+            border-color: rgba(148, 93, 183, 0.6);
+        }
+
+        .class-card:hover::before {
+            opacity: 1;
+        }
+
+        .class-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .class-icon {
+            font-size: 56px;
+            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.3));
+        }
+
+        .class-name {
+            font-size: 22px;
+            font-weight: 600;
+            margin: 18px 0 12px 0;
+            color: white;
+            position: relative;
+            z-index: 1;
+        }
+
+        .class-status {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.75);
+            position: relative;
+            z-index: 1;
+        }
+
+        .class-time {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-top: 8px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Device List in Classes Page */
+        .devices-list {
+            display: none;
+            margin-top: 30px;
+        }
+
+        .devices-list.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .back-btn {
+            padding: 14px 28px;
+            background: linear-gradient(135deg, #945db7, #fb9195);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.4s;
+            font-weight: 600;
+            box-shadow: 0 6px 20px rgba(148, 93, 183, 0.4);
+            font-family: 'Poppins', sans-serif;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px rgba(148, 93, 183, 0.6);
+        }
+
+        .device-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 30px;
+        }
+
+        .device-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(25px);
+            padding: 35px;
+            border-radius: 25px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+            border: 2px solid rgba(255, 255, 255, 0.25);
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .device-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(251, 145, 149, 0.15), rgba(65, 89, 208, 0.15));
+            opacity: 0;
+            transition: opacity 0.5s;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .device-card:hover {
+            transform: translateY(-18px) scale(1.03);
+            box-shadow: 0 25px 60px rgba(148, 93, 183, 0.5);
+            border-color: rgba(148, 93, 183, 0.6);
+        }
+
+        .device-card:hover::before {
+            opacity: 1;
+        }
+
+        .device-card.online {
+            background: rgba(251, 145, 149, 0.25);
+            box-shadow: 0 0 30px rgba(251, 145, 149, 0.7);
+        }
+
+        .device-card.offline {
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .clock {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 4px;
+            color: white;
+        }
+        .clock-time {
+            font-size: 20px;
+            font-weight: 600;
+        }
+        .clock-date {
+            font-size: 14px;
+            opacity: 0.85;
+        }
+
+        .device-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .device-icon {
+            font-size: 56px;
+            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.3));
+        }
+
+        .device-name {
+            font-size: 22px;
+            font-weight: 600;
+            margin: 18px 0 12px 0;
+            color: white;
+            position: relative;
+            z-index: 1;
+        }
+
+        .device-status {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.75);
+            position: relative;
+            z-index: 1;
+        }
+
+        .device-time {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-top: 8px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Toggle Switch */
+        .toggle-switch {
+            position: relative;
+            width: 70px;
+            height: 35px;
+            background: rgba(255, 255, 255, 0.25);
+            border-radius: 18px;
+            cursor: pointer;
+            transition: all 0.4s;
+            box-shadow: inset 0 3px 10px rgba(0,0,0,0.3);
+        }
+
+        .toggle-switch.online {
+            background: linear-gradient(135deg, #fb9195, #945db7);
+            box-shadow: 0 6px 20px rgba(251, 145, 149, 0.6);
+        }
+
+        .toggle-slider {
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            width: 27px;
+            height: 27px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+        }
+
+        .toggle-switch.online .toggle-slider {
+            transform: translateX(35px);
+        }
+
+        /* Environment Gauges */
+        .gauge-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 35px;
+            margin-bottom: 45px;
+        }
+
+        .gauge {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(25px);
+            padding: 45px;
+            border-radius: 25px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+            border: 2px solid rgba(255, 255, 255, 0.25);
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .gauge:hover {
+            transform: translateY(-18px) scale(1.06);
+            box-shadow: 0 25px 60px rgba(251, 145, 149, 0.5);
+        }
+
+        .gauge-icon {
+            font-size: 56px;
+            margin-bottom: 20px;
+        }
+
+        .gauge-value {
+            font-size: 62px;
+            font-weight: bold;
+            margin: 28px 0;
+        }
+
+        .gauge-label {
+            font-size: 17px;
+            color: rgba(255, 255, 255, 0.85);
+            font-weight: 600;
+        }
+
+        .temp { color: #fb9195; text-shadow: 0 0 25px rgba(251, 145, 149, 0.6); }
+        .humidity { color: #4159d0; text-shadow: 0 0 25px rgba(65, 89, 208, 0.6); }
+        .air { color: #945db7; text-shadow: 0 0 25px rgba(148, 93, 183, 0.6); }
+
+        /* Charts */
+        .chart-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 30px;
+            margin-bottom: 45px;
+        }
+
+        .chart-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(25px);
+            padding: 35px;
+            border-radius: 25px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+            border: 2px solid rgba(255, 255, 255, 0.25);
+            transition: all 0.5s;
+        }
+
+        .chart-card:hover {
+            transform: translateY(-12px);
+            box-shadow: 0 20px 50px rgba(148, 93, 183, 0.5);
+        }
+
+        .chart-title {
+            color: white;
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 320px;
+        }
+
+        /* Settings */
+        .settings-section {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(25px);
+            padding: 40px;
+            border-radius: 25px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+            border: 2px solid rgba(255, 255, 255, 0.25);
+            margin-bottom: 30px;
+            transition: all 0.5s;
+        }
+
+        .settings-section:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 50px rgba(65, 89, 208, 0.5);
+        }
+
+        .settings-title {
+            font-size: 26px;
+            font-weight: 700;
+            margin-bottom: 30px;
+            color: white;
+        }
+
+        .setting-item {
+            padding: 25px 0;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.15);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+        }
+
+        .setting-item:last-child {
+            border-bottom: none;
+        }
+
+        .setting-item strong {
+            font-size: 17px;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .setting-item small {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+        }
+
+        button {
+            padding: 14px 28px;
+            background: linear-gradient(135deg, #4159d0, #945db7);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.4s;
+            font-weight: 600;
+            box-shadow: 0 6px 20px rgba(65, 89, 208, 0.4);
+            font-family: 'Poppins', sans-serif;
+        }
+
+        button:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px rgba(65, 89, 208, 0.6);
+            background: linear-gradient(135deg, #945db7, #4159d0);
+        }
+
+        .logout-btn {
+            background: linear-gradient(135deg, #fb9195, #945db7);
+            box-shadow: 0 6px 20px rgba(251, 145, 149, 0.4);
+        }
+
+        .logout-btn:hover {
+            background: linear-gradient(135deg, #945db7, #fb9195);
+            box-shadow: 0 10px 30px rgba(251, 145, 149, 0.6);
+        }
+
+        h2 {
+            color: white;
+            margin-bottom: 30px;
+            font-size: 32px;
+            font-weight: 700;
+        }
+
+        /* Status Indicator */
+        .status-indicator {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            padding: 18px 30px;
+            border-radius: 15px;
+            border: 2px solid rgba(255, 255, 255, 0.25);
+            color: white;
+            font-size: 15px;
+            font-weight: 600;
+            z-index: 1000;
+            box-shadow: 0 6px 25px rgba(0,0,0,0.3);
+            display: none;
+        }
+
+        .status-indicator.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hamburger {
+                display: flex;
+            }
+
+            .sidebar {
+                position: fixed;
+                left: 0;
+                top: 0;
+                height: 100vh;
+                z-index: 1000;
+                transform: translateX(-100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                padding: 90px 20px 30px 20px;
+            }
+
+            .main-header h1 {
+                font-size: 26px;
+            }
+
+            .user-info span {
+                display: none;
+            }
+
+            .chart-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .device-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .class-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="animated-bg"></div>
+
+    <!-- Authentication Page -->
+    <div class="auth-page" id="authPage">
+        <div class="auth-container">
+            <div class="auth-box">
+                <div class="auth-logo">
+                    <h1>SYNCORA</h1>
+                    <p>Smart Classroom Automation System</p>
+                </div>
+
+
+
+
+
+
+                
+                <div class="auth-tabs">
+                    <div class="auth-tab active" onclick="switchTab('login')">Login</div>
+                    <div class="auth-tab" onclick="switchTab('signup')">Sign Up</div>
+                </div>
+
+                <!-- Login Form -->
+                <form id="loginForm" onsubmit="handleAuth(event, 'login')">
+                    <div class="form-group">
+                        <label>Username</label>
+                        <input type="text" id="loginUsername" placeholder="Enter your username" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="loginPassword" placeholder="Enter your password" required>
+                    </div>
+                    <button type="submit" class="auth-btn">Login</button>
+                </form>
+
+                <!-- Signup Form -->
+                <form id="signupForm" style="display:none;" onsubmit="handleAuth(event, 'signup')">
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" id="signupName" placeholder="Enter your full name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="signupEmail" placeholder="Enter your email" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Username</label>
+                        <input type="text" id="signupUsername" placeholder="Choose a username" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="signupPassword" placeholder="Create a password" required>
+                    </div>
+                    <button type="submit" class="auth-btn">Sign Up</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Dashboard -->
+    <div class="container" id="mainDashboard" style="display: none;">
+        <!-- Hamburger Menu -->
+        <div class="hamburger" id="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="brand-section">
+                <div class="brand-name" style="font-size: 25px;">DASHBOARD</div>
+                <div class="brand-subtitle">Classroom Automation</div>
+            </div>
+            
+            <nav>
+    <div class="nav-item active" onclick="showPage('home')">
+        <span class="nav-icon">🏠</span>
+        <span>Home</span>
+    </div>
+    <div class="nav-item" onclick="showPage('classes')">
+        <span class="nav-icon">🎓</span>
+        <span>Classes</span>
+    </div>
+    <div class="nav-item" onclick="showPage('timetable')">
+        <span class="nav-icon">📅</span>
+        <span>Timetable</span>
+    </div>
+    <div class="nav-item" onclick="showPage('analytics')">
+        <span class="nav-icon">📊</span>
+        <span>Analytics</span>
+    </div>
+    <div class="nav-item" onclick="showPage('settings')">
+        <span class="nav-icon">⚙️</span>
+        <span>Settings</span>
+    </div>
+    <div class="nav-item" onclick="showPage('request')">
+    <span class="nav-icon">📝</span>
+    <span>Request</span>
+</div>
+<div class="nav-item" onclick="showPage('approval')">
+    <span class="nav-icon">✅</span>
+    <span>Approval</span>
+</div>
+</nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            <div class="main-header">
+                <h1 id="pageTitle">Home</h1>
+                <div class="clock">
+                    <div id="clockTime" class="clock-time">12:00 AM</div>
+                    <div id="clockDate" class="clock-date">1-1-2030 Tuesday</div>
+                </div>
+                <div class="user-info">
+                    <span id="welcomeUser">Welcome!</span>
+                    <div class="user-avatar" id="userAvatar">U</div>
+                </div>
+            </div>
+
+            <!-- Home Page -->
+            <div class="page active" id="home">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">💡</div>
+                        <div class="stat-value" id="devicesOnline">0</div>
+                        <div class="stat-label">Devices Online</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🏫</div>
+                        <div class="stat-value">8</div>
+                        <div class="stat-label">Total Classrooms</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📅</div>
+                        <div class="stat-value" id="activeClasses">0</div>
+                        <div class="stat-label">Active Classes</div>
+                    </div>
+                    
+                </div>
+
+                
+            </div>
+
+            <!-- Classes Page -->
+            <div class="page" id="classes">
+                <!-- Class List View -->
+                <div id="classListView">
+                    <h2>Select a Classroom</h2>
+                    <div class="class-grid">
+                        <div class="class-card" onclick="showClassDevices('Class 1')">
+                            <div class="class-header">
+                                <div class="class-icon">🎓</div>
+                            </div>
+                            <div class="class-name">Class 1</div>
+                            <div class="class-status">4 Devices Available</div>
+                            <div class="class-time">Click to manage devices</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Devices View for Selected Class -->
+                <div class="devices-list" id="devicesListView">
+                    <button class="back-btn" onclick="backToClasses()">← Back to Classes</button>
+                    <h2 id="selectedClassName">Class Devices</h2>
+                    <div class="device-grid" id="classDeviceGrid">
+                        <!-- Devices will be populated here -->
+                    </div>
+                </div>
+            </div>
+            <!-- Timetable Page -->
+<div class="page" id="timetable">
+    <!-- Timetable Class Selection View -->
+    <div id="timetableClassView">
+        <h2>Select a Class for Timetable</h2>
+        <div class="class-grid">
+            <div class="class-card" onclick="showTimetable('Class 1')">
+                <div class="class-header">
+                    <div class="class-icon">📅</div>
+                </div>
+                <div class="class-name">Class 1</div>
+                <div class="class-status">View Weekly Schedule</div>
+                <div class="class-time">Click to view timetable</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Timetable Display View -->
+    <div class="devices-list" id="timetableDisplayView">
+        <button class="back-btn" onclick="backToTimetableClasses()">← Back to Classes</button>
+        <h2 id="selectedTimetableClass">Class Timetable</h2>
+        <div class="timetable-container">
+            <table class="timetable-table" id="timetableTable">
+                <!-- Table will be populated by JavaScript -->
+            </table>
+        </div>
+    </div>
+</div>
+
+
+
+            <!-- Analytics Page -->
+           <div class="page" id="analytics">
+    <h2>System Analytics</h2>
+    
+    <!-- Real-time Power Graph -->
+    <div class="chart-card" style="margin-bottom: 30px;">
+        <div class="chart-title">⚡ Real-Time Power Consumption (Live)</div>
+        <div class="chart-container">
+            <canvas id="powerChart"></canvas>
+        </div>
+    </div>
+    
+    
+            </div>
+
+            <!-- Request Page -->
+<div class="page" id="request">
+    <h2>Submit Device Request</h2>
+    <div class="settings-section">
+        <div class="settings-title">Request Device Access</div>
+        <div class="form-group">
+            <label>Select Class</label>
+            <select id="requestClass" style="width: 100%; padding: 16px 22px; border: 2px solid rgba(246, 242, 242, 0.25); border-radius: 15px; background: rgba(241, 236, 236, 0.12); color: black; font-size: 15px; font-family: 'Poppins', sans-serif;">
+                <option value="">Choose a class...</option>
+                <option value="Class 1">Class 1</option>
+                <option value="Class 2">Class 2</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Select Device</label>
+            <select id="requestDevice" style="width: 100%; padding: 16px 22px; border: 2px solid rgba(255, 255, 255, 0.25); border-radius: 15px; background: rgba(255, 255, 255, 0.12); color: black; font-size: 15px; font-family: 'Poppins', sans-serif;">
+                <option value="">Choose a device...</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Select State</label>
+            <select id="requestState" style="width: 100%; padding: 16px 22px; border: 2px solid rgba(255, 255, 255, 0.25); border-radius: 15px; background: rgba(255, 255, 255, 0.12); color: black; font-size: 15px; font-family: 'Poppins', sans-serif;">
+                <option value="">Choose a state...</option>
+                <option value="ON">ON</option>
+                <option value="OFF">OFF</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Reason for Request</label>
+            <textarea id="requestReason" rows="4" placeholder="Explain why you need this device..." style="width: 100%; padding: 16px 22px; border: 2px solid rgba(223, 216, 216, 0.25); border-radius: 15px; background: rgba(225, 219, 219, 0.12); color: white; font-size: 15px; font-family: 'Poppins', sans-serif; resize: vertical;"></textarea>
+        </div>
+        <button onclick="submitRequest()">Submit Request</button>
+    </div>
+
+    <h2 style="margin-top: 40px;">My Requests</h2>
+    <div id="myRequestsList" class="device-grid">
+        <!-- User's requests will appear here -->
+    </div>
+</div>
+
+<!-- Approval Page -->
+<div class="page" id="approval">
+    <h2>Pending Requests</h2>
+    <div id="pendingRequestsList" class="device-grid">
+        <!-- Pending requests will appear here -->
+    </div>
+
+    <h2 style="margin-top: 40px;">Approved Requests</h2>
+    <div id="approvedRequestsList" class="device-grid">
+        <!-- Approved requests will appear here -->
+    </div>
+
+    <h2 style="margin-top: 40px;">Denied Requests</h2>
+    <div id="deniedRequestsList" class="device-grid">
+        <!-- Denied requests will appear here -->
+    </div>
+</div>
+
+            <!-- Settings Page -->
+            <div class="page" id="settings">
+                <div class="settings-section">
+                    <div class="settings-title">User Profile</div>
+                    <div class="setting-item">
+                        <div>
+                            <strong>Name</strong><br>
+                            <small id="userName">User Name</small>
+                        </div>
+                        <button>Edit Profile</button>
+                    </div>
+                    <div class="setting-item">
+                        <div>
+                            <strong>Email</strong><br>
+                            <small id="userEmail">user@syncora.com</small>
+                        </div>
+                        <button>Change Email</button>
+                    </div>
+                    <div class="setting-item">
+                        <div>
+                            <strong>Account Type</strong><br>
+                            <small>Administrator</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <div class="settings-title">Timetable Integration</div>
+                    <div class="setting-item">
+                        <div>
+                            <strong>Auto-Sync Status</strong><br>
+                            <small>Automatically sync devices with class schedule</small>
+                        </div>
+                        <span style="color: #4cc9f0; font-weight: bold;">● Active</span>
+                    </div>
+                    <div class="setting-item">
+                        <div>
+                            <strong>Sync Interval</strong><br>
+                            <small>Check timetable every 5 minutes</small>
+                        </div>
+                        <button>Configure</button>
+                    </div>
+                    <div class="setting-item">
+                        <div>
+                            <strong>Pre-Class Preparation</strong><br>
+                            <small>Turn on devices 10 minutes before class</small>
+                        </div>
+                        <div class="toggle-switch online">
+                            <div class="toggle-slider"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <div class="settings-title">Device Preferences</div>
+                    <div class="setting-item">
+                        <div>
+                            <strong>Smart Lighting</strong><br>
+                            <small>Adjust based on time and occupancy</small>
+                        </div>
+                        <div class="toggle-switch online">
+                            <div class="toggle-slider"></div>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <div>
+                            <strong>Climate Control</strong><br>
+                            <small>Maintain optimal temperature automatically</small>
+                        </div>
+                        <div class="toggle-switch online">
+                            <div class="toggle-slider"></div>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <div>
+                            <strong>Energy Saving Mode</strong><br>
+                            <small>Reduce power consumption during off-hours</small>
+                        </div>
+                        <div class="toggle-switch online">
+                            <div class="toggle-slider"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <div class="settings-title">System Configuration</div>
+                    <div class="setting-item">
+                        <div>
+                            <strong>Notification Alerts</strong><br>
+                            <small>Get notified about device status changes</small>
+                        </div>
+                        <button>Manage</button>
+                    </div>
+                    <div class="setting-item">
+                        <div>
+                            <strong>Backup & Restore</strong><br>
+                            <small>Backup your settings and configurations</small>
+                        </div>
+                        <button>Backup Now</button>
+                    </div>
+                    <div class="setting-item">
+                        <div>
+                            <strong>Account Security</strong><br>
+                            <small>Manage password and security settings</small>
+                        </div>
+                        <button>Security Settings</button>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <div class="settings-title">Session</div>
+                    <div class="setting-item">
+                        <div>
+                            <strong>Logout</strong><br>
+                            <small>End your current session</small>
+                        </div>
+                        <button class="logout-btn" onclick="handleLogout()">Logout</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Status Indicator -->
+    <div class="status-indicator" id="statusIndicator"></div>
+
+    <script>
+        let currentUser = null;
+        let deviceStates = {};
+        let charts = {};
+        let currentClass = null;
+
+        // Device data for each class
+const classDevices = {
+    'Class 1': [
+        { name: 'Ceiling Fan', icon: '💨', type: 'fan' },
+        { name: 'Classroom Light', icon: '💡', type: 'bedroom' },
+        { name: 'Air Conditioning', icon: '❄️', type: 'kitchen' },
+        { name: 'Smart Board', icon: '📺', type: 'geyser' }
+    ],
+    'Class 2': [
+        { name: 'Ceiling Fan', icon: '💨', type: 'fan' },
+        { name: 'Classroom Light', icon: '💡', type: 'bedroom' },
+        { name: 'Air Conditioning', icon: '❄️', type: 'kitchen' },
+        { name: 'Smart Board', icon: '📺', type: 'geyser' }
+    ]
+};
+
+        // Authentication Functions
+        function switchTab(tab) {
+            const tabs = document.querySelectorAll('.auth-tab');
+            tabs.forEach(t => t.classList.remove('active'));
+            
+            if (tab === 'login') {
+                tabs[0].classList.add('active');
+                document.getElementById('loginForm').style.display = 'block';
+                document.getElementById('signupForm').style.display = 'none';
+            } else {
+                tabs[1].classList.add('active');
+                document.getElementById('loginForm').style.display = 'none';
+                document.getElementById('signupForm').style.display = 'block';
+            }
+        }
+
+        async function handleAuth(event, type) {
+            event.preventDefault();
+            
+            if (type === 'login') {
+                const username = document.getElementById('loginUsername').value;
+                const password = document.getElementById('loginPassword').value;
+                
+                if (!username || !password) {
+                    showStatus('Please enter username and password', 'error');
+                    return;
+                }
+                
+                try {
+                    showStatus('Logging in...', 'info');
+                    console.log('Attempting login with:', { username, password: '***' });
+                    
+                    const response = await fetch('http://localhost:3050/api/auth/login_Interprise', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ username, password })
+                    });
+                    
+                    console.log('Response status:', response.status);
+                    console.log('Response headers:', response.headers);
+                    
+                    const text = await response.text();
+const data = text ? JSON.parse(text) : null;
+                    
+                    if (!response.ok) {
+                        showStatus(data?.error || 'Login failed', 'error');
+                        return;
+                    }
+                    
+                    if (data?.ok && data.user) {
+                        currentUser = { 
+                            username: data.user.username, 
+                            name: data.user.username,
+                            role: data.user.role 
+                        };
+                        
+                        // Hide auth page and show dashboard
+                        document.getElementById('authPage').classList.add('hidden');
+                        document.getElementById('mainDashboard').style.display = 'flex';
+                        
+                        // Update user info
+                        document.getElementById('welcomeUser').textContent = `Welcome, ${currentUser.name}!`;
+                        document.getElementById('userAvatar').textContent = currentUser.name.charAt(0).toUpperCase();
+                        document.getElementById('userName').textContent = currentUser.name;
+                        
+                        // Configure role-based navigation
+                        configureRoleBasedUI(currentUser.role);
+                        
+                        // Initialize dashboard
+                        setTimeout(() => {
+                            initializeCharts();
+                            startSimulation();
+                            
+                            // Start real-time analytics if available
+                            if (window.startRealtimeAnalytics) {
+                                window.startRealtimeAnalytics();
+                            }
+                            
+                            showStatus('Connected successfully! System ready.', 'success');
+                        }, 500);
+                    } else {
+                        showStatus('Invalid login response', 'error');
+                    }
+                } catch (error) {
+                    console.error('Login error:', error);
+                    console.error('Error details:', error.message);
+                    showStatus(`Network error: ${error.message}. Make sure you're accessing via http://localhost:3050`, 'error');
+                }
+            } else {
+                // Signup functionality (keeping original for now)
+                const name = document.getElementById('signupName').value;
+                const username = document.getElementById('signupUsername').value;
+                const email = document.getElementById('signupEmail').value;
+                currentUser = { username, name, email, role: 'student' };
+                
+                // Hide auth page and show dashboard
+                document.getElementById('authPage').classList.add('hidden');
+                document.getElementById('mainDashboard').style.display = 'flex';
+                
+                // Update user info
+                document.getElementById('welcomeUser').textContent = `Welcome, ${currentUser.name}!`;
+                document.getElementById('userAvatar').textContent = currentUser.name.charAt(0).toUpperCase();
+                document.getElementById('userName').textContent = currentUser.name;
+                if (currentUser.email) {
+                    document.getElementById('userEmail').textContent = currentUser.email;
+                }
+                
+                // Configure role-based navigation
+                configureRoleBasedUI(currentUser.role);
+                
+                // Initialize dashboard
+                setTimeout(() => {
+                    initializeCharts();
+                    startSimulation();
+                    
+                    // Start real-time analytics if available
+                    if (window.startRealtimeAnalytics) {
+                        window.startRealtimeAnalytics();
+                    }
+                    
+                    showStatus('Connected successfully! System ready.', 'success');
+                }, 500);
+            }
+        }
+
+        function configureRoleBasedUI(role) {
+            const requestNav = document.querySelector('.nav-item[onclick="showPage(\'request\')"]');
+            const approvalNav = document.querySelector('.nav-item[onclick="showPage(\'approval\')"]');
+            
+            if (role === 'student') {
+                // Students can only see request section
+                if (requestNav) requestNav.style.display = 'flex';
+                if (approvalNav) approvalNav.style.display = 'none';
+            } else if (role === 'faculty') {
+                // Faculty can see both request and approval sections
+                if (requestNav) requestNav.style.display = 'flex';
+                if (approvalNav) approvalNav.style.display = 'flex';
+            } else {
+                // Default: hide both for unknown roles
+                if (requestNav) requestNav.style.display = 'none';
+                if (approvalNav) approvalNav.style.display = 'none';
+            }
+        }
+
+        function handleLogout() {
+            if (confirm('Are you sure you want to logout?')) {
+                document.getElementById('mainDashboard').style.display = 'none';
+                document.getElementById('authPage').classList.remove('hidden');
+                currentUser = null;
+                
+                // Reset forms
+                document.getElementById('loginForm').reset();
+                document.getElementById('signupForm').reset();
+                switchTab('login');
+                
+                showStatus('Logged out successfully', 'success');
+            }
+        }
+
+        // Navigation
+        function showPage(pageId) {
+            // Update pages
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            
+            // Update nav items
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            event.target.closest('.nav-item').classList.add('active');
+            
+            // Update title
+            const titles = {
+                'home': 'Home',
+                'classes': 'Classes',
+                'timetable': 'Timetable',
+                'analytics': 'Analytics',
+                'settings': 'Settings',
+                'request': 'Device Requests',
+                'approval': 'Approve Requests'
+            };
+            document.getElementById('pageTitle').textContent = titles[pageId];
+
+            // Reset class view when leaving classes page
+            if (pageId !== 'classes') {
+                backToClasses();
+            }
+
+            // Load requests when approval page is accessed
+            if (pageId === 'approval' && currentUser && currentUser.role === 'faculty') {
+                loadPendingRequests();
+                loadApprovedRequests();
+                loadDeniedRequests();
+            }
+
+            // Close mobile menu
+            if (window.innerWidth <= 768) {
+                document.getElementById('sidebar').classList.remove('active');
+                document.getElementById('hamburger').classList.remove('active');
+            }
+
+            // Resize charts when analytics page is shown
+            if (pageId === 'analytics') {
+                setTimeout(() => {
+                    Object.values(charts).forEach(chart => {
+                        if (chart) chart.resize();
+                    });
+                }, 100);
+            }
+        }
+
+        // Classes Page Functions
+        function showClassDevices(className) {
+            currentClass = className;
+            document.getElementById('classListView').style.display = 'none';
+            document.getElementById('devicesListView').classList.add('active');
+            document.getElementById('selectedClassName').textContent = className + ' - Devices';
+            
+            // Populate devices
+            const deviceGrid = document.getElementById('classDeviceGrid');
+            deviceGrid.innerHTML = '';
+            
+            const devices = classDevices[className];
+            devices.forEach(device => {
+    const deviceCard = document.createElement('div');
+    deviceCard.className = 'device-card offline';
+    // Set ONLY the device type for analytics to match
+    deviceCard.setAttribute('data-device', device.type);
+                
+                deviceCard.innerHTML = `
+                    <div class="device-header">
+                        <div class="device-icon">${device.icon}</div>
+                        <div class="toggle-switch" onclick="toggleDevice(this, event)">
+                            <div class="toggle-slider"></div>
+                        </div>
+                    </div>
+                    <div class="device-name">${device.name}</div>
+                    <div class="device-status">Offline • Ready to use</div>
+                    <div class="device-time">Last active: Never</div>
+                `;
+                
+                deviceGrid.appendChild(deviceCard);
+                // Initialize device state with device type only
+if (deviceStates[device.type] === undefined) {
+    deviceStates[device.type] = false;
+}
+
+            });
+        }
+
+        function backToClasses() {
+            document.getElementById('classListView').style.display = 'block';
+            document.getElementById('devicesListView').classList.remove('active');
+            currentClass = null;
+        }
+        // Timetable data
+        // Timetable data - Based on actual IT 2nd Year Schedule
+const classTimetables = {
+    'Class 1': { // Section III-A
+        'Monday': [
+            { time: '9:10 - 10:00', subject: 'AI Essentials LAB', teacher: 'Ms Arushi' },
+            { time: '10:00 - 10:50', subject: 'AI Essentials LAB', teacher: 'Ms Arushi' },
+            { time: '10:50 - 11:40', subject: 'AWS Cloud Foundation LAB', teacher: 'Mr Sagar' },
+            { time: '11:40 - 12:30', subject: 'AWS Cloud Foundation LAB', teacher: 'Mr Sagar' },
+            { time: '12:30 - 1:30', subject: 'LUNCH BREAK', teacher: '-' },
+            { time: '1:30 - 2:20', subject: 'CI (Communication)', teacher: 'Ms Krista' },
+            { time: '2:20 - 3:10', subject: 'PNS (Mathematics)', teacher: 'Dr Vandana' },
+            { time: '3:10 - 5:00', subject: 'Minor Degree Course', teacher: 'Mr Sagar' }
+        ],
+        'Tuesday': [
+            { time: '9:10 - 10:00', subject: 'OOP Java', teacher: 'Mr Rajeev' },
+            { time: '10:00 - 10:50', subject: 'DBS (Database Systems)', teacher: 'Dr Sartaj' },
+            { time: '10:50 - 11:40', subject: 'CI (Constitution of India)', teacher: 'Ms Krista' },
+            { time: '11:40 - 12:30', subject: 'ADS (Advanced Data Structures)', teacher: 'Mr Deepak' },
+            { time: '12:30 - 1:30', subject: 'LUNCH BREAK', teacher: '-' },
+            { time: '1:30 - 2:20', subject: 'Aptitude-1', teacher: 'Mr Sarvendra' },
+            { time: '2:20 - 3:10', subject: 'PNS (Mathematics)', teacher: 'Dr Vandana' },
+            { time: '3:10 - 5:00', subject: 'DBS LAB', teacher: 'Dr Sartaj, Dr Jitendra' }
+        ],
+        'Wednesday': [
+            { time: '9:10 - 10:00', subject: 'ADS (Advanced Data Structures)', teacher: 'Mr Deepak' },
+            { time: '10:00 - 10:50', subject: 'DBS (Database Systems)', teacher: 'Dr Sartaj' },
+            { time: '10:50 - 11:40', subject: 'OOP Java', teacher: 'Mr Rajeev' },
+            { time: '11:40 - 12:30', subject: 'SIA', teacher: 'Ms. Arushi' },
+            { time: '12:30 - 1:30', subject: 'LUNCH BREAK', teacher: '-' },
+            { time: '1:30 - 2:20', subject: 'ADS LAB', teacher: 'Mr Deepak, Dr Saurabh' }
+        ],
+        'Thursday': [
+            { time: '9:10 - 10:00', subject: 'SSE-1 (Soft Skills)', teacher: 'Mr Shrikant' },
+            { time: '10:00 - 10:50', subject: 'PNS (Mathematics)', teacher: 'Dr Vandana' },
+            { time: '10:50 - 11:40', subject: 'DBS (Database Systems)', teacher: 'Dr Sartaj' },
+            { time: '11:40 - 12:30', subject: 'OOP Java', teacher: 'Mr Rajeev' },
+            { time: '12:30 - 1:30', subject: 'LUNCH BREAK', teacher: '-' },
+            { time: '1:30 - 2:20', subject: 'AWS Cloud Foundations', teacher: 'Mr Sagar' },
+            { time: '2:20 - 3:10', subject: 'Minor Degree Courses', teacher: '-' },
+            { time: '3:10 - 5:00', subject: 'Minor Degree Courses', teacher: '-' }
+        ],
+        'Friday': [
+            { time: '9:10 - 10:00', subject: 'ADS (Advanced Data Structures)', teacher: 'Mr Deepak' },
+            { time: '10:00 - 10:50', subject: 'AI Essentials', teacher: 'Ms Arushi' },
+            { time: '10:50 - 11:40', subject: 'OOP Java LAB', teacher: 'Mr. Rajiv, Ms. Anubha' },
+            { time: '11:40 - 12:30', subject: 'Mentoring', teacher: '-' },
+            { time: '12:30 - 1:30', subject: 'LUNCH BREAK', teacher: '-' }
+        ]
+    },
+    'Class 2': { // Section III-C
+        'Monday': [
+            { time: '9:10 - 10:00', subject: 'PNS (Mathematics)', teacher: 'Dr Pramod' },
+            { time: '10:00 - 10:50', subject: 'DBS (Database Systems)', teacher: 'Dr Analp' },
+            { time: '10:50 - 11:40', subject: 'AI Essentials LAB', teacher: 'Ms Anupriya' },
+            { time: '11:40 - 12:30', subject: 'AI Essentials LAB', teacher: 'Ms Anupriya' },
+            { time: '12:30 - 1:30', subject: 'LUNCH BREAK', teacher: '-' },
+            { time: '1:30 - 2:20', subject: 'CI (Constitution of India)', teacher: 'Mr Ankit' },
+            { time: '2:20 - 3:10', subject: 'OOP Java', teacher: 'Mr Rajeev' },
+            { time: '3:10 - 4:00', subject: 'AWS Cloud Foundations', teacher: 'Mr Sagar' },
+            { time: '4:00 - 4:50', subject: 'SIA Project', teacher: 'Ms Arushi' }
+        ],
+        'Tuesday': [
+            { time: '9:10 - 10:00', subject: 'ADS (Advanced Data Structures)', teacher: 'Dr Saurabh' },
+            { time: '10:00 - 10:50', subject: 'SSE-1 (Soft Skills)', teacher: 'Mr Himanshu' },
+            { time: '10:50 - 12:30', subject: 'LUNCH BREAK', teacher: '-' },
+            { time: '12:30 - 2:20', subject: 'ADS LAB', teacher: 'Dr Saurabh, Mr Deepak' },
+            { time: '2:20 - 4:10', subject: 'OOP Java LAB', teacher: 'Mr Rajeev, Dr Jitendra' },
+            { time: '4:10 - 4:50', subject: 'Minor Degree Courses', teacher: '-' }
+        ],
+        'Wednesday': [
+            { time: '9:10 - 10:00', subject: 'ADS (Advanced Data Structures)', teacher: 'Dr Saurabh' },
+            { time: '10:00 - 10:50', subject: 'DBS (Database Systems)', teacher: 'Dr Analp' },
+            { time: '10:50 - 12:30', subject: 'LUNCH BREAK', teacher: '-' },
+            { time: '12:30 - 2:20', subject: 'DBS LAB', teacher: 'Dr Analp, Ms Krista' },
+            { time: '2:20 - 4:10', subject: 'AWS Cloud Foundation', teacher: 'Mr Sagar' },
+            { time: '4:10 - 4:50', subject: 'Minor Degree Courses', teacher: '-' }
+        ],
+        'Thursday': [
+            { time: '9:10 - 10:00', subject: 'DBS (Database Systems)', teacher: 'Dr Analp' },
+            { time: '10:00 - 10:50', subject: 'OOP Java', teacher: 'Mr Rajeev' },
+            { time: '10:50 - 11:40', subject: 'PNS (Mathematics)', teacher: 'Dr Pramod' },
+            { time: '11:40 - 12:30', subject: 'AI Essentials', teacher: 'Ms Anupriya' },
+            { time: '12:30 - 1:30', subject: 'LUNCH BREAK', teacher: '-' },
+            { time: '1:30 - 2:20', subject: 'Aptitude-1', teacher: 'Mr Sarvendra' },
+            { time: '2:20 - 3:10', subject: 'CI (Constitution of India)', teacher: 'Mr Ankit' },
+            { time: '3:10 - 4:00', subject: 'Minor Degree Courses', teacher: '-' },
+            { time: '4:00 - 4:50', subject: 'Minor Degree Courses', teacher: '-' }
+        ],
+        'Friday': [
+            { time: '9:10 - 10:00', subject: 'OOP Java', teacher: 'Mr Rajeev' },
+            { time: '10:00 - 10:50', subject: 'PNS (Mathematics)', teacher: 'Dr Pramod' },
+            { time: '10:50 - 12:30', subject: 'LUNCH BREAK', teacher: '-' },
+            { time: '12:30 - 1:30', subject: 'ADS (Advanced Data Structures)', teacher: 'Dr Saurabh' },
+            { time: '1:30 - 2:20', subject: 'Mentoring', teacher: '-' },
+            { time: '2:20 - 4:10', subject: 'AI Essentials LAB', teacher: 'Ms Anupriya' }
+        ]
+    }
+};
+ 
+
+// Timetable Functions
+function showTimetable(className) {
+    document.getElementById('timetableClassView').style.display = 'none';
+    document.getElementById('timetableDisplayView').classList.add('active');
+    document.getElementById('selectedTimetableClass').textContent = className + ' - Weekly Timetable';
+    
+    const timetable = classTimetables[className];
+    const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+    
+    let tableHTML = '<thead><tr><th>Time</th>';
+    days.forEach(day => {
+        tableHTML += `<th>${day}</th>`;
+    });
+    tableHTML += '</tr></thead><tbody>';
+    
+    // Get max periods
+    const maxPeriods = Math.max(...days.map(day => timetable[day].length));
+    
+    for (let i = 0; i < maxPeriods; i++) {
+        tableHTML += '<tr>';
+        tableHTML += `<td><strong>${timetable[days[0]][i].time}</strong></td>`;
+        days.forEach(day => {
+            const period = timetable[day][i];
+            if (period) {
+                tableHTML += `<td>
+                    <span class="subject-name">${period.subject}</span>
+                    <span class="teacher-name">${period.teacher}</span>
+                </td>`;
+            } else {
+                tableHTML += '<td>-</td>';
+            }
+        });
+        tableHTML += '</tr>';
+    }
+    
+    tableHTML += '</tbody>';
+    document.getElementById('timetableTable').innerHTML = tableHTML;
+}
+
+function backToTimetableClasses() {
+    document.getElementById('timetableClassView').style.display = 'block';
+    document.getElementById('timetableDisplayView').classList.remove('active');
+}
+
+        // Device Control
+function toggleDevice(element, event) {
+    if (event) {
+        event.stopPropagation();
+        event.preventDefault();
+    }
+    
+    const card = element.closest('.device-card');
+    const deviceName = card.querySelector('.device-name').textContent;
+    const deviceKey = card.getAttribute('data-device'); // This gets just "fan", "bedroom", etc.
+    
+    element.classList.toggle('online');
+    const isOnline = element.classList.contains('online');
+    
+    if (isOnline) {
+        card.classList.remove('offline');
+        card.classList.add('online');
+        const statusEl = card.querySelector('.device-status');
+        if (statusEl) {
+            statusEl.textContent = 'Online • Active';
+        }
+        const timeEl = card.querySelector('.device-time');
+        if (timeEl) {
+            timeEl.textContent = `Active since ${new Date().toLocaleTimeString()}`;
+        }
+        showStatus(`${deviceName} turned ON`, 'success');
+        
+        // Store device state using just the type
+        if (deviceKey) {
+            deviceStates[deviceKey] = true;
+        }
+    } else {
+        card.classList.remove('online');
+        card.classList.add('offline');
+        const statusEl = card.querySelector('.device-status');
+        if (statusEl) {
+            statusEl.textContent = 'Offline • Ready to use';
+        }
+        showStatus(`${deviceName} turned OFF`, 'success');
+        
+        // Store device state using just the type
+        if (deviceKey) {
+            deviceStates[deviceKey] = false;
+        }
+    }
+    
+    updateDeviceCount();
+    updateCharts();
+    
+    // Update power analytics if available
+    if (window.calculateTargetPower) {
+        window.calculateTargetPower();
+    }
+
+    const deviceMapping = {
+        'Ceiling Fan': 'V1',
+        'Classroom Light': 'V2',
+        'Air Conditioning': 'V3',
+        'Smart Board': 'V4'
+    };
+    const deviceId = deviceMapping[deviceName];
+    if (deviceId) {
+        const value = isOnline ? 1 : 0;
+        fetch(`http://localhost:3050/api/devices/${deviceId}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ value })
+        }).then(async (response) => {
+            const data = await response.json().catch(() => ({}));
+            if (!response.ok) {
+                element.classList.toggle('online');
+                const nowOnline = element.classList.contains('online');
+                if (nowOnline) {
+                    card.classList.remove('offline');
+                    card.classList.add('online');
+                    const statusEl2 = card.querySelector('.device-status');
+                    if (statusEl2) statusEl2.textContent = 'Online • Active';
+                    if (deviceKey) deviceStates[deviceKey] = true;
+                } else {
+                    card.classList.remove('online');
+                    card.classList.add('offline');
+                    const statusEl3 = card.querySelector('.device-status');
+                    if (statusEl3) statusEl3.textContent = 'Offline • Ready to use';
+                    if (deviceKey) deviceStates[deviceKey] = false;
+                }
+                showStatus(data.error || 'Failed to update device', 'error');
+            } else {
+                showStatus(`Device ${isOnline ? 'ON' : 'OFF'} synced`, 'success');
+            }
+        }).catch(() => {
+            showStatus('Network error updating device', 'error');
+        });
+    }
+}
+
+function turnAllDevicesOnOnce() {
+    if (lastTurnAllOnTriggered) return;
+    lastTurnAllOnTriggered = true;
+    const pins = ['V1','V2','V3','V4'];
+    pins.forEach(pin => {
+        fetch(`http://localhost:3050/api/devices/${pin}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ value: 1 })
+        }).catch(() => {});
+    });
+    setAllDeviceCardsState(true);
+}
+
+function turnAllDevicesOffOnce() {
+    if (lastTurnAllOffTriggered) return;
+    lastTurnAllOffTriggered = true;
+    const pins = ['V1','V2','V3','V4'];
+    pins.forEach(pin => {
+        fetch(`http://localhost:3050/api/devices/${pin}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ value: 0 })
+        }).catch(() => {});
+    });
+    setAllDeviceCardsState(false);
+}
+
+function setAllDeviceCardsState(isOnline) {
+    const cards = document.querySelectorAll('.device-card');
+    cards.forEach(card => {
+        const toggle = card.querySelector('.toggle-switch');
+        if (toggle) {
+            if (isOnline) toggle.classList.add('online'); else toggle.classList.remove('online');
+        }
+        if (isOnline) {
+            card.classList.add('online');
+            card.classList.remove('offline');
+        } else {
+            card.classList.remove('online');
+            card.classList.add('offline');
+        }
+        const statusEl = card.querySelector('.device-status');
+        if (statusEl) statusEl.textContent = isOnline ? 'Online • Active' : 'Offline • Ready to use';
+        const key = card.getAttribute('data-device');
+        if (key) deviceStates[key] = isOnline;
+    });
+    updateDeviceCount();
+    if (window.calculateTargetPower) {
+        window.calculateTargetPower();
+    }
+}
+
+        function toggleRoom(element, event) {
+            toggleDevice(element, event);
+        }
+
+        function updateDeviceCount() {
+            const onlineCount = document.querySelectorAll('.device-card.online').length;
+            const devicesOnlineEl = document.getElementById('devicesOnline');
+            if (devicesOnlineEl) {
+                devicesOnlineEl.textContent = onlineCount;
+            }
+            
+            // Update active classes count (simulated)
+            const activeClassesEl = document.getElementById('activeClasses');
+            if (activeClassesEl) {
+                activeClassesEl.textContent = Math.floor(onlineCount / 2);
+            }
+        }
+
+        // Status Notification
+        function showStatus(message, type) {
+            const indicator = document.getElementById('statusIndicator');
+            indicator.textContent = message;
+            indicator.classList.add('show');
+            
+            setTimeout(() => {
+                indicator.classList.remove('show');
+            }, 3000);
+        }
+
+        function initializeCharts() {}
+
+        function updateCharts() {
+            // Update charts based on current device states
+            if (charts.usage) {
+                const onlineCount = document.querySelectorAll('.device-card.online').length;
+                charts.usage.data.datasets[0].data = charts.usage.data.datasets[0].data.map((val, idx) => 
+                    onlineCount > idx ? val + Math.random() * 5 : val
+                );
+                charts.usage.update();
+            }
+        }
+
+        // Simulation
+        function startSimulation() {
+            // Environment UI removed; keep no-op to avoid errors
+            // If gauges exist, update them safely
+            setInterval(() => {
+                const tempEl = document.getElementById('tempValue');
+                const humEl = document.getElementById('humidityValue');
+                if (tempEl) tempEl.textContent = (22 + Math.random() * 4).toFixed(1) + '°C';
+                if (humEl) humEl.textContent = (60 + Math.random() * 10).toFixed(0) + '%';
+            }, 5000);
+        }
+
+        // Hamburger Menu
+        const hamburger = document.getElementById('hamburger');
+        const sidebar = document.getElementById('sidebar');
+
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            sidebar.classList.toggle('active');
+        });
+
+        // Initialize
+        updateDeviceCount();
+
+        // Request Management
+
+// Populate device dropdown based on selected class
+document.addEventListener('DOMContentLoaded', function() {
+    const classSelect = document.getElementById('requestClass');
+    if (classSelect) {
+        classSelect.addEventListener('change', function() {
+            const deviceSelect = document.getElementById('requestDevice');
+            deviceSelect.innerHTML = '<option value="">Choose a device...</option>';
+            
+            if (this.value && classDevices[this.value]) {
+                classDevices[this.value].forEach(device => {
+                    const option = document.createElement('option');
+                    option.value = device.name;
+                    option.textContent = device.name;
+                    deviceSelect.appendChild(option);
+                });
+            }
+        });
+    }
+});
+
+async function submitRequest() {
+    const className = document.getElementById('requestClass').value;
+    const deviceName = document.getElementById('requestDevice').value;
+    const deviceState = document.getElementById('requestState').value;
+    const reason = document.getElementById('requestReason').value;
+    
+    if (!className || !deviceName || !deviceState || !reason) {
+        showStatus('Please fill all required fields', 'error');
+        return;
+    }
+    
+    // Map device names to device IDs for backend
+    const deviceMapping = {
+        'Ceiling Fan': 'V1',
+        'Classroom Light': 'V2', 
+        'Air Conditioning': 'V3',
+        'Smart Board': 'V4'
+    };
+    
+    const deviceId = deviceMapping[deviceName];
+    if (!deviceId) {
+        showStatus('Invalid device selected', 'error');
+        return;
+    }
+    
+    try {
+        showStatus('Submitting request...', 'info');
+        
+        const response = await fetch('http://localhost:3050/api/device/student_request', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                DeviceId: deviceId,
+                state: deviceState,
+                clas: className
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (!response.ok) {
+            showStatus(data.error || 'Failed to submit request', 'error');
+            return;
+        }
+        
+        // Clear form
+        document.getElementById('requestClass').value = '';
+        document.getElementById('requestDevice').innerHTML = '<option value="">Choose a device...</option>';
+        document.getElementById('requestState').value = '';
+        document.getElementById('requestReason').value = '';
+        
+        showStatus('Request submitted successfully!', 'success');
+        
+        // Refresh request displays
+        if (currentUser.role === 'faculty') {
+            loadPendingRequests();
+        }
+        
+    } catch (error) {
+        console.error('Submit request error:', error);
+        showStatus('Network error. Please try again.', 'error');
+    }
+}
+
+function displayMyRequests() {
+    const container = document.getElementById('myRequestsList');
+    container.innerHTML = '<p style="color: white; text-align: center; padding: 40px;">My requests history not implemented yet</p>';
+}
+
+async function loadPendingRequests() {
+    try {
+        const response = await fetch('http://localhost:3050/api/device/get_pending_student_request', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        const data = await response.json();
+        
+        if (!response.ok) {
+            showStatus(data.error || 'Failed to load requests', 'error');
+            return;
+        }
+        
+        displayPendingRequests(data.user || []);
+        
+    } catch (error) {
+        console.error('Load requests error:', error);
+        showStatus('Network error loading requests', 'error');
+    }
+}
+
+function displayPendingRequests(pendingRequests = []) {
+    const container = document.getElementById('pendingRequestsList');
+    
+    if (pendingRequests.length === 0) {
+        container.innerHTML = '<p style="color: white; text-align: center; padding: 40px;">No pending requests</p>';
+        return;
+    }
+    
+    // Map device IDs back to names
+    const deviceNames = {
+        'V1': 'Ceiling Fan',
+        'V2': 'Classroom Light', 
+        'V3': 'Air Conditioning',
+        'V4': 'Smart Board'
+    };
+    
+    container.innerHTML = pendingRequests.map(request => `
+        <div class="device-card">
+            <div class="device-header">
+                <div class="device-icon">📝</div>
+            </div>
+            <div class="device-name">${deviceNames[request.DeviceId] || request.DeviceId}</div>
+            <div class="device-status">${request.Class} • Request to turn ${request.State}</div>
+            <div class="device-time">Device ID: ${request.DeviceId}</div>
+            <div class="device-time" style="margin-top: 10px;">Submitted: ${request.created_at || 'Recently'}</div>
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button onclick="handleRequest('${request.DeviceId}', '${request.State}', '${request.Class}', 'YES')" style="flex: 1; background: linear-gradient(135deg, #4cc9f0, #4361ee);">Approve</button>
+                <button onclick="handleRequest('${request.DeviceId}', '${request.State}', '${request.Class}', 'NO')" style="flex: 1; background: linear-gradient(135deg, #fb9195, #f72585);">Deny</button>
+            </div>
+        </div>
+    `).join('');
+}
+
+async function loadApprovedRequests() {
+    try {
+        const response = await fetch('http://localhost:3050/api/device/get_approved_student_request', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        const data = await response.json();
+        if (!response.ok) {
+            showStatus(data.error || 'Failed to load approved requests', 'error');
+            return;
+        }
+        displayApprovedRequests(data.user || []);
+    } catch (error) {
+        console.error('Load approved requests error:', error);
+        showStatus('Network error loading approved requests', 'error');
+    }
+}
+
+async function loadDeniedRequests() {
+    try {
+        const response = await fetch('http://localhost:3050/api/device/get_denied_student_request', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        const data = await response.json();
+        if (!response.ok) {
+            showStatus(data.error || 'Failed to load denied requests', 'error');
+            return;
+        }
+        displayDeniedRequests(data.user || []);
+    } catch (error) {
+        console.error('Load denied requests error:', error);
+        showStatus('Network error loading denied requests', 'error');
+    }
+}
+
+function displayApprovedRequests(approvedRequests = []) {
+    const container = document.getElementById('approvedRequestsList');
+    if (approvedRequests.length === 0) {
+        container.innerHTML = '<p style="color: white; text-align: center; padding: 40px;">No approved requests</p>';
+        return;
+    }
+    const deviceNames = {
+        'V1': 'Ceiling Fan',
+        'V2': 'Classroom Light', 
+        'V3': 'Air Conditioning',
+        'V4': 'Smart Board'
+    };
+    container.innerHTML = approvedRequests.map(request => `
+        <div class="device-card">
+            <div class="device-header">
+                <div class="device-icon">✅</div>
+            </div>
+            <div class="device-name">${deviceNames[request.DeviceId] || request.DeviceId}</div>
+            <div class="device-status">${request.Class} • Approved to turn ${request.State}</div>
+            <div class="device-time">Device ID: ${request.DeviceId}</div>
+            <div class="device-time" style="margin-top: 10px;">Completed: ${request.updated_at || 'Recently'}</div>
+        </div>
+    `).join('');
+}
+
+function displayDeniedRequests(deniedRequests = []) {
+    const container = document.getElementById('deniedRequestsList');
+    if (deniedRequests.length === 0) {
+        container.innerHTML = '<p style="color: white; text-align: center; padding: 40px;">No denied requests</p>';
+        return;
+    }
+    const deviceNames = {
+        'V1': 'Ceiling Fan',
+        'V2': 'Classroom Light', 
+        'V3': 'Air Conditioning',
+        'V4': 'Smart Board'
+    };
+    container.innerHTML = deniedRequests.map(request => `
+        <div class="device-card">
+            <div class="device-header">
+                <div class="device-icon">❌</div>
+            </div>
+            <div class="device-name">${deviceNames[request.DeviceId] || request.DeviceId}</div>
+            <div class="device-status">${request.Class} • Denied to turn ${request.State}</div>
+            <div class="device-time">Device ID: ${request.DeviceId}</div>
+            <div class="device-time" style="margin-top: 10px;">Completed: ${request.updated_at || 'Recently'}</div>
+        </div>
+    `).join('');
+}
+
+async function handleRequest(deviceId, state, className, approval) {
+    try {
+        showStatus(`${approval === 'YES' ? 'Approving' : 'Denying'} request...`, 'info');
+        
+        const response = await fetch('http://localhost:3050/api/device/set_student_request', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                DeviceId: deviceId,
+                State: state,
+                Class: className,
+                Approval: approval
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (!response.ok) {
+            showStatus(data.error || 'Failed to process request', 'error');
+            return;
+        }
+        
+        showStatus(`Request ${approval === 'YES' ? 'approved' : 'denied'} successfully!`, 'success');
+        
+        // Reload lists
+        loadPendingRequests();
+        loadApprovedRequests();
+        loadDeniedRequests();
+        
+    } catch (error) {
+        console.error('Handle request error:', error);
+        showStatus('Network error. Please try again.', 'error');
+    }
+}
+
+let simDate = new Date('2030-01-01T00:00:00');
+let lastReal = Date.now();
+const SCALE = 288;
+let lastTurnAllOnTriggered = false;
+let lastTurnAllOffTriggered = false;
+function formatSim() {
+    const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    let h = simDate.getHours();
+    const m = String(simDate.getMinutes()).padStart(2,'0');
+    const am = h < 12;
+    const ap = am ? 'AM' : 'PM';
+    h = h % 12;
+    if (h === 0) h = 12;
+    const t = `${h}:${m} ${ap}`;
+    const d = `${simDate.getDate()}-${simDate.getMonth()+1}-${simDate.getFullYear()} ${days[simDate.getDay()]}`;
+    const tt = document.getElementById('clockTime');
+    const dd = document.getElementById('clockDate');
+    if (tt) tt.textContent = t;
+    if (dd) dd.textContent = d;
+}
+function tickSim() {
+    const now = Date.now();
+    const dt = (now - lastReal) / 1000;
+    lastReal = now;
+    simDate = new Date(simDate.getTime() + dt * 1000 * SCALE);
+    formatSim();
+
+    const h = simDate.getHours();
+    const mm = simDate.getMinutes();
+    const totalMin = h * 60 + mm;
+    const morningStart = 9 * 60;          // 9:00 AM
+    const intervalStart = 12 * 60 + 30;   // 12:30 PM
+    const intervalEnd = 13 * 60 + 30;     // 1:30 PM
+    const eveningOff = 17 * 60;           // 5:00 PM
+
+    if (totalMin < morningStart) {
+        lastTurnAllOnTriggered = false;
+        lastTurnAllOffTriggered = false;
+    } else if (totalMin >= morningStart && totalMin < intervalStart) {
+        turnAllDevicesOnOnce();
+        lastTurnAllOffTriggered = false;
+    } else if (totalMin >= intervalStart && totalMin < intervalEnd) {
+        turnAllDevicesOffOnce();
+        lastTurnAllOnTriggered = false;
+    } else if (totalMin >= intervalEnd && totalMin < eveningOff) {
+        turnAllDevicesOnOnce();
+        lastTurnAllOffTriggered = false;
+    } else if (totalMin >= eveningOff) {
+        turnAllDevicesOffOnce();
+        lastTurnAllOnTriggered = false;
+    }
+}
+formatSim();
+setInterval(tickSim, 1000);
+    </script>
+</body>
+</html>
