@@ -1,14 +1,9 @@
 {
-  "version": 2,
-  "buildCommand": "echo 'No build needed'",
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api/$1" }
+  ],
   "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "/api/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
-    }
+    { "src": "/realtime-analytics.js", "dest": "/realtime-analytics.js" },
+    { "src": "/(.*)", "dest": "/index.html" }
   ]
 }
