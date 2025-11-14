@@ -1,28 +1,18 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "api/**/*.js",
-      "use": "@vercel/node"
-    },
-    {
-      "src": "frontend/**",
-      "use": "@vercel/static"
-    }
-  ],
+  "buildCommand": "echo 'No build needed'",
   "routes": [
     {
       "src": "/api/(.*)",
       "dest": "/api/$1"
     },
     {
+      "src": "/realtime-analytics.js",
+      "dest": "/realtime-analytics.js"
+    },
+    {
       "src": "/(.*)",
-      "dest": "/frontend/$1"
+      "dest": "/index.html"
     }
-  ],
-  "env": {
-    "BLYNK_TOKEN": "5-R922DmYj9j0RXyzpNpNp9rUvtTC_PE",
-    "SUPABASE_URL": "https://obsxkwyerfpanhdxcwec.supabase.co",
-    "SUPABASE_SERVICE_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9ic3hrd3llcmZwYW5oZHhjd2VjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI5NjM2MzgsImV4cCI6MjA3ODUzOTYzOH0.Yl5lkYZE4h9EsB9AyfhcWFPOdlUQhajb2f6OHfiBjE8"
-  }
+  ]
 }
